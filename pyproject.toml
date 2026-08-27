@@ -16,6 +16,7 @@ dependencies = [
 [project.scripts]
 ai-video-pipeline = "ai_video_pipeline.v3.cli:main"
 ai-video-reverse = "ai_video_pipeline.reverse.cli:main"
+ai-video-dashboard = "ai_video_pipeline.v3.dashboard_server:main"
 # Retained as low-level v2 compatibility adapters, not creative entry points.
 ai-video-gates = "ai_video_pipeline.cli:main"
 ai-video-sheets = "ai_video_pipeline.sheets:main"
@@ -36,4 +37,10 @@ ai-video-h3-followup-review-server = "ai_video_pipeline.h3_followup_review_serve
 where = ["src"]
 
 [tool.setuptools.package-data]
-ai_video_pipeline = ["scenario_structures/*.json", "sheet_specs/*.md"]
+ai_video_pipeline = [
+    "scenario_structures/*.json",
+    "sheet_specs/*.md",
+    "dashboard_static/index.html",
+    "dashboard_static/*.md",
+    "dashboard_static/assets/*",
+]

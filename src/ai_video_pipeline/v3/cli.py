@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .dashboard_server import launch_dashboard, serve as serve_dashboard
 from .integrity import load_json, validate_artifact
 from .orchestrator import (
     OrchestratorError,
@@ -33,6 +34,8 @@ def main() -> int:
     init.add_argument("--mode", choices=("normal", "fast_track"), default="normal")
     init.add_argument("--by", default="user")
     init.add_argument("--reason", default="new production")
+    init.add_argument("--no-dashboard", action="store_true",
+                      help="do not open the local read-only dashboard")
 
     status = sub.add_parser("status")
     status.add_argument("attempt", type=Path)
@@ -65,11 +68,25 @@ def main() -> int:
     validate.add_argument("--stage", required=True)
     validate.add_argument("--artifact", type=Path, required=True)
 
+    dashboard = sub.add_parser("dashboard")
+    dashboard.add_argument("attempt", type=Path)
+    dashboard.add_argument("--host", default="127.0.0.1")
+    dashboard.add_argument("--port", type=int, default=0)
+    dashboard.add_argument("--no-open", action="store_true")
+    dashboard.add_argument("--detach", action="store_true",
+                           help="start or reuse a background dashboard and return")
+
     args = parser.parse_args()
     try:
         if args.command == "init":
             result = initialize(args.attempt, args.direction, mode=args.mode,
                                 by=args.by, reason=args.reason)
+            if not args.no_dashboard:
+                result = dict(result)
+                try:
+                    result["dashboard"] = launch_dashboard(args.attempt)
+                except (ValueError, OSError) as error:
+                    result["dashboard"] = {"status": "failed", "error": str(error)}
         elif args.command == "status":
             result = load_state(args.attempt)
         elif args.command == "work":
@@ -83,6 +100,16 @@ def main() -> int:
                              decision=args.decision, feedback=args.feedback)
         elif args.command == "set-mode":
             result = set_mode(args.attempt, args.mode, by=args.by, reason=args.reason)
+        elif args.command == "dashboard":
+            if args.detach:
+                if args.host not in {"127.0.0.1", "localhost"} or args.port != 0:
+                    raise ValueError("detached dashboard chooses its own loopback port")
+                result = launch_dashboard(args.attempt, open_browser=not args.no_open)
+                _print(result)
+                return 1 if result.get("status") == "failed" else 0
+            serve_dashboard(args.attempt, host=args.host, port=args.port,
+                            open_browser=not args.no_open)
+            return 0
         else:
             artifact = load_json(args.artifact, "artifact")
             try:

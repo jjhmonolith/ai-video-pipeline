@@ -23,4 +23,4 @@ Each stage owns its creative schema in `.agents/skills/video-stage*/references/a
 
 The previous hybrid implementation is preserved read-only at `archive/pipeline-v2-hybrid-2026-08-27/`. Other v2 documents and non-v3 Python modules remain compatibility/reference material and are not creative authority for new runs.
 
-See `operations.md` for commands and state behavior.
+See `operations.md` for commands and state behavior. See `dashboard.md` for the repository-owned, read-only Pipeline Observer used by Codex app or CLI.

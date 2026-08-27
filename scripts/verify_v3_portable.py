@@ -125,7 +125,14 @@ def verify(root: Path, *, manifest_only: bool = False) -> dict:
     else:
         checks.append({"check": "python", "status": "pass", "version": sys.version.split()[0]})
 
-    for relative in ("AGENTS.md", "pyproject.toml", "src/ai_video_pipeline/v3/specs.py"):
+    for relative in (
+        "AGENTS.md",
+        "pyproject.toml",
+        "src/ai_video_pipeline/v3/specs.py",
+        "src/ai_video_pipeline/v3/dashboard_model.py",
+        "src/ai_video_pipeline/v3/dashboard_server.py",
+        "src/ai_video_pipeline/dashboard_static/index.html",
+    ):
         if not (root / relative).is_file():
             problems.append({"check": "project-file", "message": f"missing: {relative}"})
 
@@ -141,6 +148,8 @@ def verify(root: Path, *, manifest_only: bool = False) -> dict:
         sys.path.insert(0, str(source))
     try:
         specs = importlib.import_module("ai_video_pipeline.v3.specs")
+        importlib.import_module("ai_video_pipeline.v3.dashboard_model")
+        importlib.import_module("ai_video_pipeline.v3.dashboard_server")
         actual_stages = [item["id"] for item in specs.STAGES]
         if actual_stages != EXPECTED_STAGES:
             problems.append({"check": "stage-order", "message":

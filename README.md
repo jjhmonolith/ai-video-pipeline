@@ -98,19 +98,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/package_v3_portable.py
 
 설치·무결성 검사와 컴퓨터별 이미지/영상 생성 환경 연결 범위는 [`PORTABLE_SETUP.md`](PORTABLE_SETUP.md)에 정리되어 있다.
 
-## 영상 역설계: 완성 영상 → 생성 가능한 시나리오·컷 계약
-
-완성 MP4를 숏별로 분해하고 Hermes 멀티모달 분석을 결합해 `scenario-and-cut-design.md`, `shot-contracts.json`, 모바일 HTML을 생성한다.
-
-```bash
-PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.reverse.cli analyze input.mp4 --out runs/reverse/example
-PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.reverse.cli semantic runs/reverse/example --mode auto
-PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.reverse.cli compile runs/reverse/example
-PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.reverse.cli validate runs/reverse/example --require-semantic
-```
-
-자세한 사용법과 정확도 경계는 [`docs/video-reverse-engineering.md`](docs/video-reverse-engineering.md)를 본다.
-
 ## 확인
 
 ```bash

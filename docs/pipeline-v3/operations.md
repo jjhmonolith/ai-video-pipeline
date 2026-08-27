@@ -13,6 +13,8 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.v
 
 Use `--mode fast_track` only when the user explicitly selected it.
 
+Initialization automatically starts and opens the attempt's read-only Pipeline Observer. Its launch status and URL are included in the command result. Use `--no-dashboard` only for an explicitly headless or test run; dashboard failure never changes pipeline state or blocks Stage 01.
+
 ## Drive one loop
 
 ```bash
@@ -53,3 +55,12 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest \
 ```
 
 The full legacy-plus-v3 test suite remains useful for compatibility adapters, but v3 tests define the new creative/state boundary.
+
+## Observe a live attempt
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m ai_video_pipeline.v3.cli \
+  dashboard runs/<production>/attempts/<attempt>
+```
+
+This opens the local, read-only Pipeline Observer. It shows direct stage inputs and outputs, prompts, structured artifacts, media, receipts, validation, critiques, and failed retry history. The same repository command can be started by Codex app or Codex CLI. See `dashboard.md` for the graph contract, GitHub packaging, and safety boundary.

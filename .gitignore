@@ -11,6 +11,7 @@ __pycache__/
 .coverage
 build/
 dist/
+dashboard/node_modules/
 release/
 renders/*
 !renders/README.md

@@ -1,6 +1,6 @@
 # AI Video Pipeline v3 portable setup
 
-This bundle moves the v3 orchestration code, all nine project-local Codex stage skills, deterministic validators, low-level compatibility adapters, contracts, focused tests, and operating documentation to another computer.
+This bundle moves the v3 orchestration code, all nine project-local Codex stage skills, deterministic validators, the Pipeline Observer dashboard, low-level compatibility adapters, contracts, focused tests, and operating documentation to another computer.
 
 It deliberately excludes production runs, generated media, caches, virtual environments, secrets, credentials, provider accounts, video models, and local generation servers.
 
@@ -65,6 +65,7 @@ After dependency installation, run the full local preflight:
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest \
   tests.test_portable_package \
   tests.test_run_layout \
+  tests.test_v3_dashboard \
   tests.test_v3_integrity \
   tests.test_v3_orchestrator \
   tests.test_v3_end_to_end -v
@@ -87,6 +88,16 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python \
 ```
 
 Use `fast_track` only after an explicit user request for that attempt.
+
+The initialization command opens the new attempt's local Pipeline Observer automatically. Add `--no-dashboard` only on a deliberately headless or test machine.
+
+Open the read-only dashboard for an attempt with:
+
+```bash
+.venv/bin/ai-video-dashboard runs/<production>/attempts/<attempt>
+```
+
+Codex app or Codex CLI can start this same repository command. The packaged production UI is already included, so Node.js is not required to view an attempt. Node.js and `npm ci && npm run build` inside `dashboard/` are required only when changing the dashboard frontend.
 
 ## 5. Reconnect computer-specific media capabilities
 

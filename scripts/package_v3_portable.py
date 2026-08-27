@@ -32,12 +32,14 @@ SCRIPT_FILES = (
 ROOT_TREES = (
     ".agents/skills",
     "contracts",
+    "dashboard",
     "docs/pipeline-v3",
     "src",
 )
 TEST_FILES = (
     "tests/test_portable_package.py",
     "tests/test_run_layout.py",
+    "tests/test_v3_dashboard.py",
     "tests/test_v3_end_to_end.py",
     "tests/test_v3_integrity.py",
     "tests/test_v3_orchestrator.py",
@@ -52,13 +54,14 @@ EXCLUDED_PARTS = {
     "archive",
     "build",
     "dist",
+    "node_modules",
     "renders",
     "runs",
 }
 EXCLUDED_SUFFIXES = {".pyc", ".pyo"}
 FORBIDDEN_NAMES = {".env", "credentials.json", "secrets.json", "token.json"}
 SECRET_PATTERNS = (
-    re.compile(rb"sk-[A-Za-z0-9_-]{20,}"),
+    re.compile(rb"(?<![A-Za-z0-9_-])sk-[A-Za-z0-9_-]{20,}"),
     re.compile(rb"ghp_[A-Za-z0-9]{20,}"),
     re.compile(rb"AKIA[0-9A-Z]{16}"),
     re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),

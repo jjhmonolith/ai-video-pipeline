@@ -39,8 +39,14 @@ class PortablePackageTests(unittest.TestCase):
                     "ai-video-pipeline-v3/.agents/skills/video-stage05b-motion-prompt/SKILL.md",
                     names,
                 )
+                self.assertIn("ai-video-pipeline-v3/dashboard/package-lock.json", names)
+                self.assertIn(
+                    "ai-video-pipeline-v3/src/ai_video_pipeline/dashboard_static/index.html",
+                    names,
+                )
+                self.assertIn("ai-video-pipeline-v3/tests/test_v3_dashboard.py", names)
                 self.assertIn("ai-video-pipeline-v3/PORTABLE_MANIFEST.json", names)
-                forbidden_parts = {".git", ".secrets", ".venv", "archive", "runs"}
+                forbidden_parts = {".git", ".secrets", ".venv", "archive", "node_modules", "runs"}
                 for name in names:
                     self.assertTrue(forbidden_parts.isdisjoint(Path(name).parts), name)
                     self.assertFalse(

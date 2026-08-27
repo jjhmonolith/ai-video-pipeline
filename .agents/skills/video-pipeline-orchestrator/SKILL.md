@@ -12,7 +12,7 @@ Before acting, read [references/architecture.md](references/architecture.md) and
 ## Run the state machine
 
 1. Locate the exact attempt directory under `runs/<production>/attempts/<attempt>/`. Do not mutate another attempt or the archived v2 snapshot.
-2. If `pipeline-state.json` does not exist, initialize v3 with the user's direction verbatim. Default to `normal`; select `fast_track` only when the user explicitly requested it for this attempt.
+2. If `pipeline-state.json` does not exist, initialize v3 with the user's direction verbatim. Default to `normal`; select `fast_track` only when the user explicitly requested it for this attempt. The `init` command opens that attempt's read-only Pipeline Observer by default. Keep the local dashboard launch enabled during production; use `--no-dashboard` only for an explicitly headless or test run. If `init` reports dashboard launch failure, retry once with `PYTHONPATH=src python3 -m ai_video_pipeline.v3.cli dashboard <attempt> --detach`; a sandboxed Codex host may require permission for the local loopback server. Report any remaining observer failure but continue production because it owns no state transition or approval gate.
 3. Request one work order with `PYTHONPATH=src python3 -m ai_video_pipeline.v3.cli work <attempt>`.
 4. Read only the skill named by `stage_skill`, its directly referenced authoring file, the work order, and the upstream artifacts named by its receipt list.
 5. Act as the stage author. Write exactly one candidate to `artifact_path`; do not use a deterministic compiler to invent creative prose or prompts.
