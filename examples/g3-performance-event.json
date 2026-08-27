@@ -1,0 +1,7 @@
+{
+  "stage": "shot_exception_review",
+  "dimensions": ["performance"],
+  "hero_take": true,
+  "critic_disagreement": true,
+  "ai_margin": 0.2
+}

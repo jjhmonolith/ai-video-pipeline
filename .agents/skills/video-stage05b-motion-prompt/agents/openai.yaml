@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 05.5 Motion Prompt"
+  short_description: "Refine C01 motion prompts from approved start plates"
+  default_prompt: "Use $video-stage05b-motion-prompt to turn approved start plates into final C01 motion prompts."

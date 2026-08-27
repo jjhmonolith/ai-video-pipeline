@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 04 Shot Design"
+  short_description: "Direct scenes into setups, shots, camera, and time"
+  default_prompt: "Use $video-stage04-shot-design to turn approved scenes into a shootable plan."

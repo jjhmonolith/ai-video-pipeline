@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+.DS_Store
+.secrets/
+.venv/
+*.egg-info/
+*.py[cod]
+.coverage
+build/
+dist/
+renders/*
+!renders/README.md

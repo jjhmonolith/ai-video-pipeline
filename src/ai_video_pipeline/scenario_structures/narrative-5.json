@@ -1,0 +1,60 @@
+{
+  "structure_id": "narrative-5",
+  "source": "Tim Runia, The ONLY 5 Lines You Need To Tell Any Story. 단일 화자이고 유료 상품을 판다. 널리 쓰이는 형식이지만 이 조사로는 교차검증 1명",
+  "fits": "주인공이 무언가를 원하고 무언가가 막고 그것이 바뀌는 이야기",
+  "does_not_fit": "리뷰, 시연, 튜토리얼, 리스트, 몽타주. 욕구와 갈등이 없는 형식",
+  "acts": [
+    {
+      "id": "situation",
+      "must": "어디이고 누가 있는가",
+      "share": 0.15,
+      "beat_seconds": [
+        5,
+        8
+      ]
+    },
+    {
+      "id": "desire",
+      "must": "무엇을 원하거나 무엇이 잘못됐나",
+      "share": 0.15,
+      "beat_seconds": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "conflict",
+      "must": "무엇이 막는가",
+      "share": 0.25,
+      "beat_seconds": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "change",
+      "must": "무엇이 바뀌는가",
+      "share": 0.3,
+      "beat_seconds": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "result",
+      "must": "이제 무엇이 다른가",
+      "share": 0.15,
+      "beat_seconds": [
+        7,
+        10
+      ]
+    }
+  ],
+  "beat_seconds_source": "docs/design/shot-grammar.md 4절. 인서트 3-4, 액션 5-7, 감정 7-10, 설정 5-8",
+  "pacing": {
+    "require_variation": true,
+    "min_distinct_lengths": 3,
+    "min_ratio": 1.5,
+    "why": "같은 속도로 끝까지 가면 관객이 딴생각을 시작한다. 다만 몽타주처럼 균등이 옳은 형식은 이 검사를 끈다"
+  }
+}

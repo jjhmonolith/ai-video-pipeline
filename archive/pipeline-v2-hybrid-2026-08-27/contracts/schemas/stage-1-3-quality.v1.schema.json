@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-1-3-quality.v1",
+  "title": "Common stage 1-3 semantic contracts",
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "required": ["class", "evidence_ids", "basis"],
+      "properties": {
+        "class": {"enum": ["user_mandated", "evidence_supported", "creative_choice", "inferred", "unresolved"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "basis": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "directionImpact": {
+      "type": "object",
+      "required": ["artifact", "stage", "status", "basis", "timestamp_source"],
+      "properties": {
+        "artifact": {"type": "string"},
+        "stage": {"type": "string"},
+        "status": {"enum": ["compatible", "revalidation_required", "regeneration_required", "unaffected"]},
+        "basis": {"type": "string"},
+        "timestamp_source": {"type": "string"}
+      }
+    },
+    "affordance": {
+      "type": "object",
+      "required": ["action_id", "actor_part_id", "compatible_target_class", "canonical_approach", "force_result"],
+      "properties": {
+        "action_id": {"type": "string", "minLength": 1},
+        "actor_part_id": {"type": "string", "minLength": 1},
+        "compatible_target_class": {"type": "string", "minLength": 1},
+        "canonical_approach": {"type": "string", "minLength": 1},
+        "force_result": {"type": "string", "minLength": 1},
+        "forbidden_results": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "subBeat": {
+      "type": "object",
+      "required": ["id", "actor_subject_id", "action", "result_state", "split_after"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "actor_subject_id": {"type": ["string", "null"]},
+        "action": {"type": "string", "minLength": 1},
+        "target_subject_id": {"type": ["string", "null"]},
+        "target_part_id": {"type": ["string", "null"]},
+        "result_state": {"type": "string", "minLength": 1},
+        "split_after": {"type": "boolean"}
+      }
+    },
+    "interactionContract": {
+      "type": "object",
+      "required": ["sub_beat_id", "actor_subject_id", "tool_subject_id", "tool_part_id", "target_subject_id", "target_part_id", "result_state", "fixed_part_ids"],
+      "properties": {
+        "sub_beat_id": {"type": "string", "minLength": 1},
+        "actor_subject_id": {"type": "string", "minLength": 1},
+        "tool_subject_id": {"type": "string", "minLength": 1},
+        "tool_part_id": {"type": "string", "minLength": 1},
+        "target_subject_id": {"type": "string", "minLength": 1},
+        "target_part_id": {"type": "string", "minLength": 1},
+        "result_state": {"type": "string", "minLength": 1},
+        "fixed_part_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "dialogue": {
+      "type": "object",
+      "required": ["mode", "text"],
+      "properties": {
+        "mode": {"enum": ["spoken", "onscreen_spoken", "voiceover", "none", "silent"]},
+        "text": {"type": "string"},
+        "language": {"type": ["string", "null"]},
+        "lip_sync_required": {"type": ["boolean", "null"]}
+      }
+    },
+    "panel": {
+      "type": "object",
+      "required": ["panel_id", "subject_id", "view_state", "intended_use", "review_status"],
+      "properties": {
+        "panel_id": {"type": "string"},
+        "subject_id": {"type": "string"},
+        "view_state": {"type": "string"},
+        "intended_use": {"type": "string"},
+        "safe_for_identity_reference": {"type": ["boolean", "null"]},
+        "safe_for_motion_reference": {"type": ["boolean", "null"]},
+        "reference_role_candidates": {
+          "type": "array",
+          "items": {"enum": ["identity_reference", "environment_geometry_reference", "motion_affordance_reference"]},
+          "uniqueItems": true
+        },
+        "binds_part_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "binds_interaction_site_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "contains_duplicate_subjects": {"type": ["boolean", "null"]},
+        "contains_text": {"type": ["boolean", "null"]},
+        "crop_coordinates": {"type": ["object", "null"]},
+        "reference_crop_path": {"type": ["string", "null"]},
+        "review_status": {"enum": ["human_review_required", "approved", "rejected"]}
+      }
+    },
+    "beat": {
+      "type": "object",
+      "required": ["id", "seconds", "primary_action", "primary_visible_change", "where_subject_id", "sublocation_id", "dialogue"],
+      "properties": {
+        "primary_action": {"type": "string", "minLength": 1},
+        "primary_visible_change": {"type": "string", "minLength": 1},
+        "sub_beats": {"type": "array", "items": {"$ref": "#/$defs/subBeat"}},
+        "interaction_contracts": {"type": "array", "items": {"$ref": "#/$defs/interactionContract"}},
+        "where_subject_id": {"type": "string"},
+        "sublocation_id": {"type": "string"},
+        "transition_requirement": {"type": "string"},
+        "dialogue": {"$ref": "#/$defs/dialogue"},
+        "cast_presence": {"type": "array"},
+        "visual_focus": {"type": "array", "items": {"type": "string"}},
+        "object_roles": {"type": "array"}
+      }
+    }
+  }
+}

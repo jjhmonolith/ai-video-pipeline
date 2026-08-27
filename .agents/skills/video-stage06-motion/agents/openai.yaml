@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 06 Motion"
+  short_description: "Generate and review sequential motion takes"
+  default_prompt: "Use $video-stage06-motion to run the approved C01 prompt and retry only after visible take failure."

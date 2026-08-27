@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Pipeline Recovery"
+  short_description: "Repair failed artifacts without weakening source authority"
+  default_prompt: "Use $video-pipeline-recovery to route a failed artifact to its owning stage."

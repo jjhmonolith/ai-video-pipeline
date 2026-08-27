@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 03 Scenario"
+  short_description: "Author sequences, scenes, events, and reference debt"
+  default_prompt: "Use $video-stage03-scenario to write the scene design without premature shots."

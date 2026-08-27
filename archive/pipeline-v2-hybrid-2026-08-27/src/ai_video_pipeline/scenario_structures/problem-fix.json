@@ -1,0 +1,51 @@
+{
+  "structure_id": "problem-fix",
+  "source": "튜토리얼과 수리 콘텐츠의 흔한 순서",
+  "fits": "문제를 진단하고 고치는 절차물",
+  "does_not_fit": "감정선이 요점인 이야기",
+  "acts": [
+    {
+      "id": "problem",
+      "must": "무엇이 잘못됐는가",
+      "share": 0.2,
+      "beat_seconds": [
+        5,
+        8
+      ]
+    },
+    {
+      "id": "diagnose",
+      "must": "원인을 어떻게 찾는가",
+      "share": 0.3,
+      "beat_seconds": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "treat",
+      "must": "무엇을 하는가",
+      "share": 0.35,
+      "beat_seconds": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "verify",
+      "must": "고쳐졌는지 어떻게 아는가",
+      "share": 0.15,
+      "beat_seconds": [
+        5,
+        7
+      ]
+    }
+  ],
+  "beat_seconds_source": "docs/design/shot-grammar.md 4절. 인서트 3-4, 액션 5-7, 감정 7-10, 설정 5-8",
+  "pacing": {
+    "require_variation": true,
+    "min_distinct_lengths": 3,
+    "min_ratio": 1.5,
+    "why": "같은 속도로 끝까지 가면 관객이 딴생각을 시작한다. 다만 몽타주처럼 균등이 옳은 형식은 이 검사를 끈다"
+  }
+}

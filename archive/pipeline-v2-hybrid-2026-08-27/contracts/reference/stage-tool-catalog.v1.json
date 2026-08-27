@@ -1,0 +1,1916 @@
+{
+  "schema_version": "1.0.0",
+  "status": "design-only",
+  "implementation_authority": "none",
+  "environment": [
+    "GPT Pro",
+    "GPT Image API",
+    "local MiniMax H3 768p",
+    "deterministic media tools"
+  ],
+  "tool_contract_required": [
+    "tool_id",
+    "purpose",
+    "input_artifacts",
+    "output_artifacts",
+    "side_effect_class",
+    "deterministic",
+    "idempotency_key",
+    "failure_codes",
+    "human_gates",
+    "quality_metrics",
+    "lineage",
+    "compensation"
+  ],
+  "operation_inheritance": {
+    "tool_version": "1.0.0-design",
+    "stage": "inherit from containing toolkit.stage",
+    "preconditions": [
+      "all input artifact hashes resolve",
+      "scope is authorized",
+      "required prior human approvals exist"
+    ],
+    "postconditions": [
+      "declared outputs exist and validate",
+      "output lineage points to exact inputs and config",
+      "status and metrics receipt persisted"
+    ]
+  },
+  "side_effect_classes": [
+    "read_only",
+    "local_write",
+    "generation_cost",
+    "external_publish"
+  ],
+  "global_failure_codes": [
+    "INPUT_HASH_MISSING",
+    "SCHEMA_INVALID",
+    "PROVENANCE_BROKEN",
+    "PERMISSION_REQUIRED",
+    "RUNTIME_UNAVAILABLE",
+    "TRANSIENT_FAILURE",
+    "QUALITY_REPAIR",
+    "BUDGET_EXCEEDED",
+    "RIGHTS_BLOCK",
+    "QUARANTINED"
+  ],
+  "toolkits": [
+    {
+      "stage": "S0",
+      "toolkit": "BriefKit",
+      "operations": [
+        {
+          "tool_id": "brief.normalize",
+          "purpose": "자유 입력을 제작 브리프로 정규화",
+          "input_artifacts": [
+            "conversation",
+            "documents",
+            "urls"
+          ],
+          "output_artifacts": [
+            "VideoBrief"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "brief.conflict_scan",
+          "purpose": "목표·채널·브랜드 제약 충돌 탐지",
+          "input_artifacts": [
+            "VideoBrief"
+          ],
+          "output_artifacts": [
+            "BriefConflictReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "critical_conflict_recall",
+            "false_alarm_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "brief.quality_charter_draft",
+          "purpose": "작품 약속·감정 궤적·우선순위·anti-goal 초안",
+          "input_artifacts": [
+            "VideoBrief"
+          ],
+          "output_artifacts": [
+            "HumanQualityCharterDraft"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G1"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S1",
+      "toolkit": "EvidenceKit",
+      "operations": [
+        {
+          "tool_id": "evidence.claim_extract",
+          "purpose": "검증 가능한 주장과 표현 위험 추출",
+          "input_artifacts": [
+            "script_or_brief"
+          ],
+          "output_artifacts": [
+            "ClaimCandidates"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "evidence.bind_source",
+          "purpose": "claim을 exact source evidence에 결박",
+          "input_artifacts": [
+            "ClaimCandidates",
+            "SourceBodies"
+          ],
+          "output_artifacts": [
+            "ClaimLedger"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "exact_evidence_coverage",
+            "unsupported_claim_count"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "evidence.contradiction_scan",
+          "purpose": "출처 간 조건·수치·시점 충돌 탐지",
+          "input_artifacts": [
+            "ClaimLedger"
+          ],
+          "output_artifacts": [
+            "ContradictionReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "evidence.rights_matrix",
+          "purpose": "인물·제품·로고·음원·폰트 권리 상태 정리",
+          "input_artifacts": [
+            "ReferenceAssets",
+            "SourceMetadata"
+          ],
+          "output_artifacts": [
+            "RightsMatrix"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S2",
+      "toolkit": "ConceptKit",
+      "operations": [
+        {
+          "tool_id": "concept.generate_divergent",
+          "purpose": "의미 있게 다른 2–4개 방향 생성",
+          "input_artifacts": [
+            "VideoBrief",
+            "HumanQualityCharterDraft",
+            "ClaimLedger"
+          ],
+          "output_artifacts": [
+            "ConceptCards"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "concept.semantic_dedup",
+          "purpose": "표면만 다른 concept 제거",
+          "input_artifacts": [
+            "ConceptCards"
+          ],
+          "output_artifacts": [
+            "DistinctConceptCards"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "distinct_axis_count",
+            "human_duplicate_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "concept.tradeoff_matrix",
+          "purpose": "미학·서사·비용·위험 비교",
+          "input_artifacts": [
+            "DistinctConceptCards"
+          ],
+          "output_artifacts": [
+            "ConceptTradeoffMatrix"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G1",
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S3",
+      "toolkit": "StoryKit",
+      "operations": [
+        {
+          "tool_id": "story.beat_graph_compile",
+          "purpose": "hook부터 payoff까지 시간축 인과 생성",
+          "input_artifacts": [
+            "ApprovedConcept",
+            "ClaimLedger"
+          ],
+          "output_artifacts": [
+            "BeatGraph"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "story.duration_simulate",
+          "purpose": "낭독시간·정보밀도·중복 검사",
+          "input_artifacts": [
+            "Script",
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "DurationReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "duration_error_sec",
+            "information_density"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "story.knowledge_state_track",
+          "purpose": "audience/character knowledge state 추적",
+          "input_artifacts": [
+            "BeatGraph",
+            "Script"
+          ],
+          "output_artifacts": [
+            "KnowledgeStateMap"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "story.subtext_map",
+          "purpose": "spoken intent와 hidden intent 분리",
+          "input_artifacts": [
+            "Script",
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "SubtextMap"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G2"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "story.scene_ablation",
+          "purpose": "장면 삭제 시 의미·감정 손실 분석",
+          "input_artifacts": [
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "SceneAblationReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G1"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S4",
+      "toolkit": "LookKit",
+      "operations": [
+        {
+          "tool_id": "look.style_bible_compile",
+          "purpose": "렌즈·광원·palette·재료·금지 look compile",
+          "input_artifacts": [
+            "ApprovedConcept",
+            "HumanQualityCharter"
+          ],
+          "output_artifacts": [
+            "StyleBible"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G4",
+            "G5"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "look.entity_sheet_build",
+          "purpose": "product/character/location/prop multi-view·state sheet 구성",
+          "input_artifacts": [
+            "ReferenceAssets",
+            "StyleBible"
+          ],
+          "output_artifacts": [
+            "EntitySheets"
+          ],
+          "side_effect_class": "generation_cost",
+          "deterministic": false,
+          "human_gates": [
+            "G5"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "identity_fidelity",
+            "state_coverage"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "look.world_state_graph",
+          "purpose": "entity·공간·시간·감정 state 관계 생성",
+          "input_artifacts": [
+            "EntitySheets",
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "WorldStateGraph"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "look.reference_conflict_scan",
+          "purpose": "reference 간 형태·시대·palette 충돌 탐지",
+          "input_artifacts": [
+            "StyleBible",
+            "EntitySheets"
+          ],
+          "output_artifacts": [
+            "ReferenceConflictReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "look.crop_preview",
+          "purpose": "delivery crop별 gaze와 정보 손실 preview",
+          "input_artifacts": [
+            "EntitySheets",
+            "format_profiles"
+          ],
+          "output_artifacts": [
+            "CropPreviewSet"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G4"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S5",
+      "toolkit": "PrevisKit",
+      "operations": [
+        {
+          "tool_id": "previs.shot_contract_compile",
+          "purpose": "Beat Graph를 Shot Intent Cards로 변환",
+          "input_artifacts": [
+            "BeatGraph",
+            "StyleBible",
+            "WorldStateGraph"
+          ],
+          "output_artifacts": [
+            "ShotIntentCards"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "previs.continuity_graph_build",
+          "purpose": "eyeline·소품·감정·state continuity 연결",
+          "input_artifacts": [
+            "ShotIntentCards",
+            "WorldStateGraph"
+          ],
+          "output_artifacts": [
+            "ContinuityGraph"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "previs.animatic_render",
+          "purpose": "stills·scratch VO·임시 sound로 저비용 animatic 생성",
+          "input_artifacts": [
+            "ShotIntentCards",
+            "ReferenceAssets",
+            "Script"
+          ],
+          "output_artifacts": [
+            "Animatic",
+            "AnimaticManifest"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G1",
+            "G4",
+            "G7"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "duration_accuracy",
+            "coverage_completeness"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "previs.coverage_preflight",
+          "purpose": "의미·reaction·insert·bridge coverage 부족 탐지",
+          "input_artifacts": [
+            "Animatic",
+            "ShotIntentCards"
+          ],
+          "output_artifacts": [
+            "CoveragePlan"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "previs.cost_risk_estimate",
+          "purpose": "고비용·저성공 가능 shot 식별",
+          "input_artifacts": [
+            "ShotIntentCards",
+            "runtime_capabilities"
+          ],
+          "output_artifacts": [
+            "GenerationRiskPlan"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S6",
+      "toolkit": "GenerateKit",
+      "operations": [
+        {
+          "tool_id": "generate.request_compile",
+          "purpose": "승인된 intent/reference를 model request로 compile",
+          "input_artifacts": [
+            "ShotIntentCard",
+            "ApprovedReferences",
+            "FeedbackDelta"
+          ],
+          "output_artifacts": [
+            "GenerationRequest"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "request_contract_pass",
+            "locked_variable_preservation"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "generate.gpt_image_reference",
+          "purpose": "승인된 reference/keyframe 생성",
+          "input_artifacts": [
+            "GenerationRequest"
+          ],
+          "output_artifacts": [
+            "ImageCandidates",
+            "AttemptReceipt"
+          ],
+          "side_effect_class": "generation_cost",
+          "deterministic": false,
+          "human_gates": [
+            "G4",
+            "G5"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "generate.h3_submit",
+          "purpose": "H3 영상+동시음향 후보 제출",
+          "input_artifacts": [
+            "GenerationRequest"
+          ],
+          "output_artifacts": [
+            "JobHandle",
+            "AttemptReceipt"
+          ],
+          "side_effect_class": "generation_cost",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "submit_success",
+            "duplicate_submit_count"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "generate.h3_reconcile",
+          "purpose": "running job 상태·재시작·stale 상태 복구",
+          "input_artifacts": [
+            "JobHandle",
+            "AttemptReceipt"
+          ],
+          "output_artifacts": [
+            "JobStatus",
+            "RecoveryReceipt"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "orphan_job_count",
+            "recovery_success"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "generate.asset_ingest",
+          "purpose": "결과를 content-addressed store에 보존",
+          "input_artifacts": [
+            "ProviderResult"
+          ],
+          "output_artifacts": [
+            "CandidateAssets",
+            "AssetManifest"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "hash_complete_rate",
+            "asset_loss_count"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "generate.failure_classify",
+          "purpose": "transient/contract/quality/permission 실패 분리",
+          "input_artifacts": [
+            "FailedAttempt"
+          ],
+          "output_artifacts": [
+            "FailureDisposition"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S7",
+      "toolkit": "SelectKit",
+      "operations": [
+        {
+          "tool_id": "select.segment_mine",
+          "purpose": "후보에서 usable interval 탐색",
+          "input_artifacts": [
+            "CandidateAssets",
+            "ShotIntentCard"
+          ],
+          "output_artifacts": [
+            "CandidateSegments"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "salvage_yield",
+            "human_segment_correction"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "select.frame_salvage",
+          "purpose": "재사용 가능한 중간·종료 frame 추출",
+          "input_artifacts": [
+            "CandidateAssets",
+            "CandidateSegments"
+          ],
+          "output_artifacts": [
+            "ReusableFrames"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "select.defect_evidence_build",
+          "purpose": "결함별 exact frame/timecode evidence 생성",
+          "input_artifacts": [
+            "CandidateAssets",
+            "ShotIntentCard"
+          ],
+          "output_artifacts": [
+            "DefectEvidence"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "defect_precision",
+            "defect_recall"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "select.blind_critic",
+          "purpose": "생성 rationale 없이 후보 관찰·shortlist",
+          "input_artifacts": [
+            "CandidateAssets",
+            "LockedBrief",
+            "rubric"
+          ],
+          "output_artifacts": [
+            "QualityCritiques"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "select.order_swap_check",
+          "purpose": "AB/BA 순서 편향과 winner flip 검사",
+          "input_artifacts": [
+            "QualityCritiques",
+            "CandidatePairs"
+          ],
+          "output_artifacts": [
+            "OrderBiasReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G3",
+            "G6"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "select.repair_delta_propose",
+          "purpose": "보존·변경·금지·최소 수정 제안",
+          "input_artifacts": [
+            "DefectEvidence",
+            "CandidateSegments"
+          ],
+          "output_artifacts": [
+            "RepairDeltaDraft"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G3",
+            "G6"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S8",
+      "toolkit": "EditKit",
+      "operations": [
+        {
+          "tool_id": "edit.edl_compile",
+          "purpose": "선정 구간을 EDL로 compile",
+          "input_artifacts": [
+            "CandidateSegments",
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "EditDecisionList"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "edit.roughcut_variants",
+          "purpose": "fast/balanced/linger rough cut 생성",
+          "input_artifacts": [
+            "EditDecisionList",
+            "SoundMapDraft"
+          ],
+          "output_artifacts": [
+            "RoughCutVariants"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G7"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "edit.deterministic_render",
+          "purpose": "동일 manifest에서 재현 가능한 render",
+          "input_artifacts": [
+            "RenderManifest",
+            "Assets"
+          ],
+          "output_artifacts": [
+            "RenderedVideo",
+            "RenderReceipt"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "frame_hash_stability",
+            "render_failure_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "edit.traditional_fix_route",
+          "purpose": "trim/crop/retime/cutaway로 해결 가능한 결함 분류",
+          "input_artifacts": [
+            "DefectEvidence",
+            "EditDecisionList"
+          ],
+          "output_artifacts": [
+            "TraditionalFixPlan"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "edit.missing_coverage_detect",
+          "purpose": "reaction/insert/bridge/establishing 부족 탐지",
+          "input_artifacts": [
+            "RoughCut",
+            "BeatGraph",
+            "ShotIntentCards"
+          ],
+          "output_artifacts": [
+            "MissingCoverageList"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "edit.partial_rerun_plan",
+          "purpose": "영향받는 scope만 regeneration 대상으로 계산",
+          "input_artifacts": [
+            "MissingCoverageList",
+            "FeedbackDelta",
+            "lineage_graph"
+          ],
+          "output_artifacts": [
+            "PartialRerunPlan"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G1",
+            "G6",
+            "G7"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S9",
+      "toolkit": "SoundKit",
+      "operations": [
+        {
+          "tool_id": "sound.stem_classify",
+          "purpose": "H3 native audio를 DIA/AMB/FOL/SFX/MUS 후보로 분류",
+          "input_artifacts": [
+            "CandidateAudio"
+          ],
+          "output_artifacts": [
+            "StemCandidates"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "sound.map_compile",
+          "purpose": "sound source·기능·continuity를 시간축에 배치",
+          "input_artifacts": [
+            "StemCandidates",
+            "BeatGraph"
+          ],
+          "output_artifacts": [
+            "SoundMap"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "sound.continuity_check",
+          "purpose": "room tone·거리·reverb·방향 불연속 탐지",
+          "input_artifacts": [
+            "SoundMap",
+            "RoughCut"
+          ],
+          "output_artifacts": [
+            "SoundContinuityReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "sound.mix_variants",
+          "purpose": "dry/world/subjective/music-led mix 생성",
+          "input_artifacts": [
+            "SoundMap",
+            "RoughCut"
+          ],
+          "output_artifacts": [
+            "MixVariants"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G8"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "sound.loudness_normalize",
+          "purpose": "비교본 loudness와 final delivery 기준 정규화",
+          "input_artifacts": [
+            "MixVariants"
+          ],
+          "output_artifacts": [
+            "NormalizedMixes",
+            "LoudnessReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S10",
+      "toolkit": "ReviewKit",
+      "operations": [
+        {
+          "tool_id": "review.gate_resolve",
+          "purpose": "state·dimension·risk로 G1–G10 호출 결정",
+          "input_artifacts": [
+            "PipelineEvent",
+            "GateCatalog"
+          ],
+          "output_artifacts": [
+            "GateResolution"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "review.evidence_bundle",
+          "purpose": "결정에 필요한 clip/frame/diff/timecode 수집",
+          "input_artifacts": [
+            "GateResolution",
+            "Artifacts"
+          ],
+          "output_artifacts": [
+            "ReviewEvidenceBundle"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "review.packet_compose",
+          "purpose": "A/B/C 장점·손실·비용·한 질문 구성",
+          "input_artifacts": [
+            "ReviewEvidenceBundle",
+            "QualityCritiques"
+          ],
+          "output_artifacts": [
+            "HumanJudgmentPacket"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "review.telegram_format",
+          "purpose": "휴대폰 검토용 media/contact sheet 생성",
+          "input_artifacts": [
+            "HumanJudgmentPacket"
+          ],
+          "output_artifacts": [
+            "TelegramReviewPacket"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "review.feedback_translate",
+          "purpose": "사람 응답을 keep/change/forbid delta로 번역",
+          "input_artifacts": [
+            "HumanResponse",
+            "HumanJudgmentPacket"
+          ],
+          "output_artifacts": [
+            "FeedbackDelta"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "review.decision_verify",
+          "purpose": "번역 결과를 사용자 원문과 대조",
+          "input_artifacts": [
+            "FeedbackDelta",
+            "HumanResponse"
+          ],
+          "output_artifacts": [
+            "DecisionVerification"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8",
+            "G9",
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S11",
+      "toolkit": "ReleaseKit",
+      "operations": [
+        {
+          "tool_id": "release.variant_render",
+          "purpose": "채널별 화면비·자막·길이 파생본 생성",
+          "input_artifacts": [
+            "ApprovedMaster",
+            "ChannelProfiles"
+          ],
+          "output_artifacts": [
+            "ChannelVariants"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "release.mechanical_qa",
+          "purpose": "codec/fps/duration/clipping/subtitle/black frame 검사",
+          "input_artifacts": [
+            "ChannelVariants"
+          ],
+          "output_artifacts": [
+            "MechanicalQAReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "validator_pass_rate",
+            "false_negative_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "release.claim_rights_check",
+          "purpose": "claim·rights·disclosure 최종 상태 확인",
+          "input_artifacts": [
+            "ClaimLedger",
+            "RightsMatrix",
+            "ChannelVariants"
+          ],
+          "output_artifacts": [
+            "ReleaseRiskReport"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "release.metadata_draft",
+          "purpose": "title/thumbnail/description/CTA 후보 생성",
+          "input_artifacts": [
+            "ApprovedMaster",
+            "VideoBrief"
+          ],
+          "output_artifacts": [
+            "DistributionMetadataDraft"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "release.publish_packet",
+          "purpose": "게시 대상·권한·artifact를 묶고 승인 대기",
+          "input_artifacts": [
+            "ChannelVariants",
+            "ReleaseRiskReport",
+            "DistributionMetadataDraft"
+          ],
+          "output_artifacts": [
+            "PublishPacket"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    },
+    {
+      "stage": "S12",
+      "toolkit": "LearnKit",
+      "operations": [
+        {
+          "tool_id": "learn.event_collect",
+          "purpose": "생성·도구·critic·사람·관객 이벤트 수집",
+          "input_artifacts": [
+            "ProductionReceipts",
+            "HumanDecisions",
+            "AudienceResponses"
+          ],
+          "output_artifacts": [
+            "LearningEvents"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.failure_cluster",
+          "purpose": "반복 실패를 scope·조건별 군집화",
+          "input_artifacts": [
+            "LearningEvents"
+          ],
+          "output_artifacts": [
+            "FailureClusters"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.hypothesis_propose",
+          "purpose": "다음에 바꿀 변수 하나를 가설로 작성",
+          "input_artifacts": [
+            "FailureClusters",
+            "LearningRules"
+          ],
+          "output_artifacts": [
+            "ChangeHypothesis"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.paired_trial_build",
+          "purpose": "동일 shot baseline/variant sealed trial 구성",
+          "input_artifacts": [
+            "ChangeHypothesis",
+            "RepresentativeShotPack"
+          ],
+          "output_artifacts": [
+            "PairedTrialManifest"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.scorecard_compute",
+          "purpose": "품질·효율·도구 성능을 동일 공식으로 집계",
+          "input_artifacts": [
+            "TrialReceipts",
+            "BlindHumanReviews"
+          ],
+          "output_artifacts": [
+            "TrialScorecard"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.rule_adjudicate",
+          "purpose": "project/series/global rule 승격·축소·격리",
+          "input_artifacts": [
+            "TrialScorecard",
+            "RulePromotionPolicy"
+          ],
+          "output_artifacts": [
+            "LearningRuleDecision"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": false,
+          "human_gates": [
+            "G1",
+            "G3",
+            "G7",
+            "G8",
+            "G9",
+            "G10"
+          ],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        },
+        {
+          "tool_id": "learn.regression_suite_build",
+          "purpose": "승격 rule의 실패/성공 사례를 회귀 pack에 추가",
+          "input_artifacts": [
+            "LearningRuleDecision",
+            "TrialArtifacts"
+          ],
+          "output_artifacts": [
+            "RegressionSuiteUpdate"
+          ],
+          "side_effect_class": "local_write",
+          "deterministic": true,
+          "human_gates": [],
+          "failure_codes": [
+            "INPUT_HASH_MISSING",
+            "SCHEMA_INVALID",
+            "QUALITY_REPAIR"
+          ],
+          "quality_metrics": [
+            "artifact_completeness",
+            "human_correction_rate"
+          ],
+          "idempotency_key": "sha256(tool_version + input_hashes + config_hash)",
+          "lineage": "all inputs and config snapshots hash-bound",
+          "compensation": "quarantine output; preserve prior approved artifact"
+        }
+      ]
+    }
+  ]
+}

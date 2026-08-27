@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 02 Sheets"
+  short_description: "Author and render structured reference sheets"
+  default_prompt: "Use $video-stage02-sheets to build the approved visual reference system."

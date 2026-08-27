@@ -1,0 +1,51 @@
+{
+  "structure_id": "kishotenketsu",
+  "source": "동아시아 4막 구조. 갈등을 요구하지 않고 대비로 의미를 만든다는 해석과, 갈등이 구조의 일부라는 반론이 함께 있다. 합의된 사실이 아니다",
+  "fits": "갈등 없이 관점의 전환으로 의미를 만드는 이야기",
+  "does_not_fit": "대립과 해소가 요점인 이야기",
+  "acts": [
+    {
+      "id": "ki",
+      "must": "무엇이 있는가",
+      "share": 0.25,
+      "beat_seconds": [
+        5,
+        8
+      ]
+    },
+    {
+      "id": "sho",
+      "must": "그것이 이어지고 넓어진다",
+      "share": 0.25,
+      "beat_seconds": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "ten",
+      "must": "앞의 둘을 다시 보게 만드는 전환",
+      "share": 0.25,
+      "beat_seconds": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "ketsu",
+      "must": "새 관점으로 맺는다",
+      "share": 0.25,
+      "beat_seconds": [
+        7,
+        10
+      ]
+    }
+  ],
+  "beat_seconds_source": "docs/design/shot-grammar.md 4절. 인서트 3-4, 액션 5-7, 감정 7-10, 설정 5-8",
+  "pacing": {
+    "require_variation": true,
+    "min_distinct_lengths": 3,
+    "min_ratio": 1.5,
+    "why": "같은 속도로 끝까지 가면 관객이 딴생각을 시작한다. 다만 몽타주처럼 균등이 옳은 형식은 이 검사를 끈다"
+  }
+}

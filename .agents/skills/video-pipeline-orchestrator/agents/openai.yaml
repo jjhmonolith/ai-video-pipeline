@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Pipeline Orchestrator"
+  short_description: "Run the LLM-authored video pipeline continuously"
+  default_prompt: "Use $video-pipeline-orchestrator to run or resume this production attempt."

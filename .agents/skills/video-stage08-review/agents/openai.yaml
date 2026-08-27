@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 08 Review"
+  short_description: "Audit the finished production and release readiness"
+  default_prompt: "Use $video-stage08-review to perform final evidence-backed production review."

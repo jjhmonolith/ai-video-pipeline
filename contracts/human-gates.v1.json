@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0.0",
+  "policy": {
+    "ai_role": "shortlist_evidence_and_risk",
+    "human_role": "meaning_priority_exception_and_release",
+    "auto_approve_when_gate_matches": false,
+    "execution_modes": {
+      "normal": {
+        "default": true,
+        "intermediate_human_approval_required": true
+      },
+      "fast_track": {
+        "explicit_user_opt_in_required": true,
+        "intermediate_human_approval_required": false,
+        "ai_review_packet_application_allowed": true,
+        "attempt_10_non_safety_accepted_defect_allowed": true,
+        "external_side_effects_authorized": false
+      }
+    },
+    "comparison_order_policy": "AB_then_BA; order flip becomes tie",
+    "close_pair_threshold_5pt": 0.5
+  },
+  "gates": [
+    {
+      "gate_id": "G1",
+      "name": "intent_scene_function",
+      "owner_roles": ["director", "story_editor"],
+      "stages": ["concept_pending", "script_evidence_checked", "rough_cut_review"],
+      "trigger_dimensions": ["intent", "narrative", "story_meaning"],
+      "required_evidence": ["current_cut", "shot_removed_cut", "audience_knowledge_map"],
+      "question_contract": {"single_decision": true, "decision_axis": "clarity_vs_emotional_residue"},
+      "output_fields": ["scene_promise", "beat_change", "reveal_policy", "priority_order"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G2",
+      "name": "subtext",
+      "owner_roles": ["director", "performance_director"],
+      "stages": ["script_evidence_checked", "animatic_pending", "shot_exception_review", "rough_cut_review"],
+      "trigger_dimensions": ["subtext", "hidden_intent"],
+      "required_evidence": ["literal_take", "concealing_take", "testing_take", "micro_timing_timeline"],
+      "question_contract": {"single_decision": true, "decision_axis": "reveal_now_vs_reveal_later"},
+      "output_fields": ["objective", "obstacle", "tactic", "hidden_intent", "reveal_to_audience_at"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G3",
+      "name": "performance_authenticity",
+      "owner_roles": ["director", "performance_director", "editor"],
+      "stages": ["shot_exception_review", "segments_selected", "rough_cut_review"],
+      "trigger_dimensions": ["performance"],
+      "required_evidence": ["blind_synced_abc", "stimulus_response_window", "strongest_interval", "unusable_interval", "repair_risk"],
+      "question_contract": {"single_decision": true, "decision_axis": "authentic_take_vs_clean_take"},
+      "output_fields": ["selected_take", "usable_interval", "reaction_latency", "performance_keep", "accepted_defect", "repair_method"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G4",
+      "name": "composition_pov",
+      "owner_roles": ["cinematographer", "director"],
+      "stages": ["look_bible_pending", "animatic_pending", "shot_exception_review"],
+      "trigger_dimensions": ["composition_pov", "visual"],
+      "required_evidence": ["shot_scale_contact_sheet", "static_move_comparison", "delivery_crop_overlay", "lost_context"],
+      "question_contract": {"single_decision": true, "decision_axis": "immediate_clarity_vs_embodied_pov"},
+      "output_fields": ["vantage_point", "gaze_order", "shot_scale", "lens_depth_rule", "movement_motivation"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G5",
+      "name": "production_design_world",
+      "owner_roles": ["production_designer", "art_director"],
+      "stages": ["look_bible_pending", "animatic_pending", "shot_exception_review"],
+      "trigger_dimensions": ["production_design", "world"],
+      "required_evidence": ["location_plan", "material_prop_board", "state_variants", "character_environment_pov_map"],
+      "question_contract": {"single_decision": true, "decision_axis": "surface_spectacle_vs_world_logic"},
+      "output_fields": ["world_rules", "spatial_map", "material_palette", "prop_biographies", "forbidden_anachronisms"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G6",
+      "name": "continuity_exception",
+      "owner_roles": ["editor", "continuity_supervisor"],
+      "stages": ["shot_exception_review", "segments_selected", "rough_cut_review"],
+      "trigger_dimensions": ["continuity"],
+      "required_evidence": ["exit_entry_frame_diff", "state_diff", "spatial_diagram", "fix_hide_accept_options"],
+      "question_contract": {"single_decision": true, "decision_axis": "physical_match_vs_emotional_match"},
+      "output_fields": ["hard_continuity", "soft_continuity", "approved_cheats", "bridge_method", "state_patch"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G7",
+      "name": "pacing_cut_point",
+      "owner_roles": ["editor", "director"],
+      "stages": ["edit_rendered", "rough_cut_review"],
+      "trigger_dimensions": ["rhythm", "pacing"],
+      "required_evidence": ["fast_cut", "balanced_cut", "linger_cut", "music_off_pass", "emotion_shift_markers"],
+      "question_contract": {"single_decision": true, "decision_axis": "comprehension_speed_vs_emotional_arrival"},
+      "output_fields": ["cut_in", "cut_out", "hold_reason", "ellipsis", "reaction_order"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G8",
+      "name": "sound_meaning",
+      "owner_roles": ["sound_director", "editor"],
+      "stages": ["rough_cut_review", "sound_map_pending"],
+      "trigger_dimensions": ["sound"],
+      "required_evidence": ["dry_mix", "world_mix", "subjective_mix", "music_led_mix", "sound_source_map"],
+      "question_contract": {"single_decision": true, "decision_axis": "explicit_emotion_vs_subjective_experience"},
+      "output_fields": ["sound_pov", "narrative_carrier", "stem_policy", "music_entry", "silence_rule"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G9",
+      "name": "audience_comprehension",
+      "owner_roles": ["audience_researcher", "director", "editor"],
+      "stages": ["rough_cut_review", "final_qa_pending"],
+      "trigger_dimensions": ["audience", "comprehension"],
+      "required_evidence": ["unaided_recall", "confusion_timecodes", "boredom_timecodes", "remembered_moments", "intent_interpretation_mismatch"],
+      "question_contract": {"single_decision": true, "decision_axis": "repair_misread_vs_preserve_ambiguity"},
+      "output_fields": ["cohort", "unaided_recall", "confusion_timecodes", "intended_ambiguity", "revision_hypothesis"],
+      "authority": "human_required"
+    },
+    {
+      "gate_id": "G10",
+      "name": "culture_ethics_release",
+      "owner_roles": ["cultural_reviewer", "ethics_owner", "producer"],
+      "stages": ["concept_pending", "final_qa_pending", "publish_approved"],
+      "trigger_dimensions": ["culture_ethics", "rights", "release"],
+      "required_evidence": ["affected_groups", "consulted_perspectives", "consent_scope", "benefit_harm", "disclosure_options", "distribution_scope"],
+      "question_contract": {"single_decision": true, "decision_axis": "proceed_consult_revise_withhold"},
+      "output_fields": ["affected_groups", "consultants", "consent_scope", "representation_risks", "disclosure", "distribution_limits", "release_authority"],
+      "authority": "human_release_only"
+    }
+  ]
+}

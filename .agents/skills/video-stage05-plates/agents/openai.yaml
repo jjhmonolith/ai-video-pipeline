@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 05 Plates"
+  short_description: "Fulfill references and generate reviewed start plates"
+  default_prompt: "Use $video-stage05-plates to complete references before reviewed start plates."

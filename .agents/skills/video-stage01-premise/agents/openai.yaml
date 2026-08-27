@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Stage 01 Premise"
+  short_description: "Author the production premise and creative contract"
+  default_prompt: "Use $video-stage01-premise to author Stage 01 from the supplied direction."

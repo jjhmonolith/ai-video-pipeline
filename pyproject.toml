@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-video-pipeline"
+version = "0.3.0"
+description = "LLM-authored creative video pipeline with deterministic integrity guards"
+requires-python = ">=3.9"
+dependencies = [
+    "keyring>=25.7.0",
+    "openai>=2.48.0",
+    "Pillow>=10.0",
+]
+
+[project.scripts]
+ai-video-pipeline = "ai_video_pipeline.v3.cli:main"
+ai-video-reverse = "ai_video_pipeline.reverse.cli:main"
+# Retained as low-level v2 compatibility adapters, not creative entry points.
+ai-video-gates = "ai_video_pipeline.cli:main"
+ai-video-sheets = "ai_video_pipeline.sheets:main"
+ai-video-shots = "ai_video_pipeline.shot_design:main"
+ai-video-stage4-experiment = "ai_video_pipeline.stage4_experiment:main"
+ai-video-stage5-canary = "ai_video_pipeline.stage5_canary:main"
+ai-video-stage5 = "ai_video_pipeline.stage5:main"
+ai-video-mode = "ai_video_pipeline.execution_mode:main"
+ai-video-stage6 = "ai_video_pipeline.stage6:main"
+ai-video-stage4-compare = "ai_video_pipeline.stage4_comparison:main"
+ai-video-h3-ablation = "ai_video_pipeline.h3_conditioning_experiment:main"
+ai-video-h3-ablation-review = "ai_video_pipeline.h3_experiment_review:main"
+ai-video-h3-followup = "ai_video_pipeline.h3_followup_experiment:main"
+ai-video-h3-followup-review = "ai_video_pipeline.h3_followup_review:main"
+ai-video-h3-followup-review-server = "ai_video_pipeline.h3_followup_review_server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ai_video_pipeline = ["scenario_structures/*.json", "sheet_specs/*.md"]

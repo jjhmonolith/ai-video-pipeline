@@ -1,0 +1,12 @@
+{
+  "gate_id": "G7",
+  "scope_ids": ["scene_12"],
+  "keep": ["subdued_expression", "no_music"],
+  "change": ["cut_out_plus_12_frames"],
+  "forbid": ["expository_insert"],
+  "priority_order": ["performance_authenticity", "comprehension", "pace"],
+  "accepted_defects": ["background_hand_mismatch_0.2s"],
+  "regeneration_scope": "none",
+  "verification_question": "12프레임 hold가 과장 없이 상처를 읽히게 하는가?",
+  "user_words": "B로 가되 음악은 넣지 말자"
+}

@@ -1,0 +1,146 @@
+{
+  "schema_version": "stage4-followup-research.v1",
+  "experiment_id": "stage4-camera-anchor-affordance-v2",
+  "created_at": "2026-08-26",
+  "status": "human_review_unblinded_and_analyzed",
+  "video_engine": "minimax-h3-local-768p",
+  "engine_locked": true,
+  "implementation_status": {
+    "confirmed_upstream_changes": "implemented",
+    "mechanical_capacity_axis_gate": "implemented_after_m1_invalidation",
+    "legacy_v1_artifacts": "warnings_only_not_rejected",
+    "unresolved_defaults": [
+      "first_only versus paired H3 conditioning",
+      "natural versus soft_follow versus locked for locomotion"
+    ]
+  },
+  "audio_policy": {
+    "h3_native_audio": "discard_before_review",
+    "target_language": "ko",
+    "dialogue_in_h3_prompt": false,
+    "lip_sync_scored": false
+  },
+  "upstream_preconditions": [
+    "stage01 interaction part ids and affordance contracts approved",
+    "stage01 native H3 audio discard policy recorded",
+    "stage02 identity, environment geometry and motion affordance crops separately approved",
+    "no whole reference board used as H3 conditioning",
+    "stage03 compound actions split into atomic sub-beats",
+    "stage03 interacted tool, target part and result state explicitly bound",
+    "stage03 professional-tool capacity ratio at least 1.15 and axis relation explicitly bound",
+    "stage02 mechanical motion crop proves visible clearance and 90-degree action-plane alignment",
+    "stage05 start plate approved before optional end plate editing"
+  ],
+  "studies": [
+    {
+      "study_id": "L1-locomotion-camera-anchor",
+      "topic": "luxury-penthouse-tour",
+      "source_beat": "B02",
+      "duration_seconds": 5.0,
+      "action": "host lowers the presenting arm, turns feet hips and torso toward the living room, then walks three natural steps deeper into the room and remains facing away with arms down",
+      "fixed_inputs": [
+        "approved first plate",
+        "approved host identity crop",
+        "approved threshold-to-living environment geometry crop",
+        "action prompt within each camera-policy pair",
+        "H3 settings",
+        "seed within each pair"
+      ],
+      "factors": {
+        "camera_policy": ["natural", "soft_follow", "locked"],
+        "last_frame": ["absent", "present"],
+        "seed": [862711, 862712, 862713]
+      },
+      "clip_count": 18,
+      "primary_metrics": [
+        "correct turn and depth direction",
+        "arm lowering and gait continuity",
+        "reversal backpedal or renewed presentation gesture",
+        "motivated smooth camera following",
+        "architecture and furniture hallucination",
+        "lighting flicker or exposure pumping",
+        "identity drift and body interpenetration"
+      ],
+      "decision_rule": "a policy must win at least two of three seed-matched comparisons without a higher catastrophic-error rate; paired is allowed only if it improves endpoint attainment without increasing reversal, renewed gesture or background drift"
+    },
+    {
+      "study_id": "M1-mechanical-affordance-anchor",
+      "topic": "sky-village-plumber",
+      "status": "invalidated_before_human_review",
+      "eligible_for_factor_inference": false,
+      "diagnostic_human_review": "complete_with_one_unscored_candidate",
+      "invalidation": {
+        "class": "fixed_input_geometry_failure",
+        "observed_by": "human",
+        "reason": "all task images show pipe or coupling geometry too large/thick for the wrench and stage the wrench diagonally to display it instead of keeping the wrench action plane perpendicular to the target axis",
+        "human_scores_recorded_before_invalidation": 0,
+        "required_before_rerun": [
+          "tool_capacity_mm divided by target_extent_mm is at least 1.15",
+          "visible daylight clearance before seating",
+          "opposed jaw contact is visible after seating",
+          "tool action plane is perpendicular to the target axis at 90 degrees with at most 5 degrees error",
+          "mechanical truth takes priority over a three-quarter hero view"
+        ]
+      },
+      "duration_seconds": 5.0,
+      "camera_policy": "locked",
+      "tasks": [
+        {
+          "task_id": "seat_wrench",
+          "action": "align and fully seat the pipe-wrench jaws on coupling-01 without rotating it"
+        },
+        {
+          "task_id": "turn_coupling",
+          "action": "with the wrench already seated, pull the handle through a small arc so only coupling-01 rotates about fifteen degrees"
+        }
+      ],
+      "fixed_inputs": [
+        "approved task-specific first plate",
+        "approved plumber identity crop",
+        "approved target environment geometry crop",
+        "task prompt within each factor pair",
+        "H3 settings",
+        "seed within each comparison"
+      ],
+      "factors": {
+        "reference_pack": ["identity_only", "identity_plus_affordance"],
+        "last_frame": ["absent", "present"],
+        "task": ["seat_wrench", "turn_coupling"],
+        "seed": [862721, 862722, 862723]
+      },
+      "clip_count": 24,
+      "primary_metrics": [
+        "correct single tool identity",
+        "contact only with the declared target part",
+        "jaw coupling and handle angle plausibility",
+        "hand tool and tool pipe interpenetration",
+        "fixed-pipe and valve-hub invariance",
+        "object creation disappearance or deformation",
+        "forbidden water discharge"
+      ],
+      "decision_rule": "affordance references must improve target/contact success in at least four of six matched units without increasing object errors; paired is allowed only if mechanical-state success improves without increasing fixed-part deformation"
+    }
+  ],
+  "execution": {
+    "pilot_seed_count": 1,
+    "pilot_clips": 14,
+    "main_additional_seed_count": 2,
+    "main_additional_clips": 28,
+    "total_clips": 42,
+    "gpu_servers": 2,
+    "blind_review": true,
+    "ai_review_sealed_before_human": true,
+    "human_review_requires_full_playback": true,
+    "completed_clips": 42,
+    "automatic_format_qa_passed": 42,
+    "blind_audio_removed": 42,
+    "ai_review_status": "sealed_before_human_review",
+    "human_review_status": {
+      "L1-locomotion-camera-anchor": "complete_winner_H",
+      "M1-mechanical-affordance-anchor": "24_watched_23_scored_no_winner_both_groups"
+    },
+    "eligible_clips_for_human_comparison": 18,
+    "invalidated_clips_preserved_for_failure_analysis": 24,
+    "analysis": "docs/research/stage4-followup-experiment-analysis-2026-08-26.md"
+  }
+}

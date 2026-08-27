@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.0.0",
+  "status": "design-only",
+  "implementation_authority": "none",
+  "principle": "creative quality first; efficiency changes require quality guardrails",
+  "loops": [
+    {
+      "loop_id": "shot_repair",
+      "cadence": "minutes",
+      "unit": "candidate_segment",
+      "states": [
+        "candidate_generated",
+        "segment_mined",
+        "defect_evidenced",
+        "repair_delta_proposed",
+        "human_decision_if_triggered",
+        "scope_local_fix",
+        "locked_element_regression_check",
+        "selected_or_quarantined"
+      ],
+      "termination": [
+        "usable_interval_selected",
+        "traditional_edit_fix_selected",
+        "candidate_hard_cap_reached",
+        "provenance_or_rights_hard_block"
+      ],
+      "primary_metrics": [
+        "salvage_yield",
+        "partial_fix_rate",
+        "locked_element_regression_count",
+        "candidates_per_accepted_shot"
+      ]
+    },
+    {
+      "loop_id": "project_editorial",
+      "cadence": "hours_to_days",
+      "unit": "rough_cut",
+      "states": [
+        "animatic_approved",
+        "selects_assembled",
+        "roughcut_variants_rendered",
+        "first_viewer_screening",
+        "critic_calibration_compared",
+        "missing_coverage_diagnosed",
+        "affected_scenes_repaired",
+        "release_candidate_approved"
+      ],
+      "primary_metrics": [
+        "unaided_message_recall",
+        "remembered_moments",
+        "confusion_timecodes",
+        "boredom_timecodes",
+        "felt_emotion",
+        "ai_like_moments",
+        "critic_calibration_error"
+      ]
+    },
+    {
+      "loop_id": "cross_project_learning",
+      "cadence": "per_completed_project",
+      "unit": "change_hypothesis",
+      "states": [
+        "observation",
+        "project_preference",
+        "series_candidate",
+        "paired_trial",
+        "series_rule_or_quarantine",
+        "global_candidate",
+        "unseen_holdout",
+        "global_rule_or_quarantine",
+        "regression_monitoring"
+      ],
+      "primary_metrics": [
+        "blind_pairwise_preference",
+        "critical_defect_count",
+        "dimension_non_inferiority",
+        "accepted_second_cost",
+        "human_review_minutes",
+        "cross_project_effect_direction"
+      ]
+    }
+  ],
+  "learning_event_required_fields": [
+    "event_id",
+    "timestamp",
+    "project_id",
+    "scene_id",
+    "shot_id",
+    "candidate_id",
+    "segment_id",
+    "tool_id",
+    "tool_version",
+    "model_runtime_version",
+    "input_hashes",
+    "reference_lineage",
+    "change_variable",
+    "locked_variables",
+    "critic_prediction",
+    "human_gate_decision",
+    "accepted_defects",
+    "repair_action",
+    "before_after_quality_delta",
+    "generation_time",
+    "generation_cost",
+    "human_review_time",
+    "audience_response",
+    "policy_version"
+  ],
+  "change_hypothesis_required_fields": [
+    "hypothesis_id",
+    "scope",
+    "situation",
+    "problem",
+    "evidence_ids",
+    "change_variable",
+    "baseline",
+    "variant",
+    "locked_variables",
+    "expected_primary_effect",
+    "quality_guardrails",
+    "representative_shot_manifest",
+    "promotion_gate"
+  ],
+  "paired_trial_contract": {
+    "same_task_identity": true,
+    "same_input_hashes": true,
+    "same_model_runtime_version": true,
+    "same_reference_duration_aspect_audio": true,
+    "single_changed_variable": true,
+    "same_candidate_and_retry_budget": true,
+    "blind_labels": true,
+    "crossed_ab_ba_order": true,
+    "complete_receipts_required": true,
+    "external_publish_forbidden": true,
+    "canonical_rule_mutation_forbidden_until_approved": true
+  },
+  "promotion_policy": {
+    "project_preference": {
+      "minimum_consistent_human_choices": 3,
+      "critical_defect_count": 0,
+      "max_scope": "project"
+    },
+    "series_rule_candidate": {
+      "minimum_representative_shot_decisions": 12,
+      "minimum_blind_pairwise_preference": 0.60,
+      "critical_defect_count": 0,
+      "maximum_dimension_drop_on_5_point_scale": 0.25,
+      "minimum_efficiency_gain_when_claimed": 0.15,
+      "human_promotion_required": true
+    },
+    "global_rule_candidate": {
+      "minimum_distinct_holdout_projects": 2,
+      "minimum_total_holdout_shot_decisions": 20,
+      "effect_direction_must_match_per_project": true,
+      "brand_genre_specificity_must_be_removed_or_conditioned": true,
+      "human_promotion_required": true
+    }
+  },
+  "automatic_promotion_allowed": [
+    "mechanical_validation_threshold",
+    "missing_file_and_duplicate_submit_recovery",
+    "deterministic_subtitle_audio_crop_repair",
+    "cache_batch_parallelism_with_identical_outputs"
+  ],
+  "human_promotion_required": [
+    "prompt_style",
+    "camera_grammar",
+    "performance_rule",
+    "candidate_budget",
+    "story_and_reveal_policy",
+    "edit_rhythm",
+    "sound_and_silence_policy",
+    "accepted_defect_policy",
+    "critic_threshold",
+    "human_question_policy",
+    "series_or_global_creative_default"
+  ],
+  "never_auto_promote": [
+    "culture_ethics_rights_release",
+    "ai_simulation_as_substitute_for_real_audience",
+    "creative_intent_change_from_engagement_only",
+    "single_successful_prompt_as_global_rule"
+  ],
+  "rollback": {
+    "triggers": [
+      "critical_defect",
+      "quality_guardrail_regression",
+      "cross_project_effect_reversal",
+      "model_runtime_version_change",
+      "human_override"
+    ],
+    "action": "revert to previous versioned rule; preserve failed rule and receipts in quarantine; mark dependent rules revalidation_required"
+  }
+}

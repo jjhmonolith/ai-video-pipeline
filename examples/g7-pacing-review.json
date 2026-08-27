@@ -1,0 +1,34 @@
+{
+  "decision_id": "G7-SCENE-12-001",
+  "gate_id": "G7",
+  "scope_ids": ["scene_12"],
+  "shot_or_scene_purpose": "관객이 배신을 인지한 뒤 주인공의 억제를 느끼게 한다",
+  "locked_quality_rules": [
+    "반전 전에는 상대 의도를 확정하지 않는다",
+    "melodramatic music 금지"
+  ],
+  "options": [
+    {
+      "id": "A",
+      "asset": "scene12_fast.mp4",
+      "strength": "인과가 빠르게 읽힌다",
+      "loss": "주인공의 상처가 도착하기 전에 잘린다",
+      "detected_defects": [],
+      "downstream_cost": "none"
+    },
+    {
+      "id": "B",
+      "asset": "scene12_linger.mp4",
+      "strength": "반응이 12프레임 더 남아 subtext가 보인다",
+      "loss": "sequence가 0.5초 느려진다",
+      "detected_defects": ["background_hand_mismatch_0.2s"],
+      "downstream_cost": "trim_only"
+    }
+  ],
+  "ai_recommendation": "B",
+  "ai_confidence": 0.61,
+  "critic_disagreement": ["story_critic:A", "performance_critic:B"],
+  "why_human_needed": "이해 속도와 감정 잔상의 우선순위는 인간의 미학적 권한이다",
+  "one_question": "이 장면의 1순위는 즉시 이해 A입니까, 늦게 도착하는 상처 B입니까?",
+  "answer_modes": ["select", "combine", "preserve_and_change", "free_text"]
+}

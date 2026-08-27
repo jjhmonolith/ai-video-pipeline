@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sheet-receipt.v2.schema.json",
+  "title": "AI Video Pipeline sheet receipt v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "contract",
+    "plans",
+    "generator_modes",
+    "sheets",
+    "failed"
+  ],
+  "properties": {
+    "schema_version": {"const": "sheet-receipt.v2"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "contract": {
+      "type": "object",
+      "required": ["contract_id", "sha256"],
+      "properties": {
+        "contract_id": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "minLength": 1}
+      }
+    },
+    "generator_modes": {
+      "type": "array",
+      "items": {"enum": ["api", "codex", "reuse", "unknown"]},
+      "uniqueItems": true
+    },
+    "sheets": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/sheet"}
+    },
+    "failed": {"type": "array"}
+  },
+  "$defs": {
+    "generator": {
+      "type": "object",
+      "required": ["mode", "invocation", "usage_accounting"],
+      "properties": {
+        "mode": {"enum": ["api", "codex", "reuse", "unknown"]},
+        "invocation": {"type": "string", "minLength": 1},
+        "surface": {"enum": ["desktop", "cli", "ide", "cloud", "unknown"]},
+        "model": {"type": ["string", "null"]},
+        "usage_accounting": {"type": "string", "minLength": 1},
+        "token_detail": {"type": "string"}
+      }
+    },
+    "sheet": {
+      "type": "object",
+      "required": [
+        "element",
+        "kind",
+        "status",
+        "generator",
+        "delivered",
+        "prompt_sha256",
+        "definition_sha256",
+        "contract_sha256",
+        "bytes",
+        "sha256"
+      ],
+      "properties": {
+        "element": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "status": {"enum": ["generated", "existing"]},
+        "generator": {"$ref": "#/$defs/generator"},
+        "requested": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "integer", "minimum": 1},
+            {"type": "integer", "minimum": 1}
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "source_dimensions": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "integer", "minimum": 1},
+            {"type": "integer", "minimum": 1}
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "delivered": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "integer", "minimum": 1},
+            {"type": "integer", "minimum": 1}
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "fit": {"enum": ["exact", "crop-and-downscale"]},
+        "quality": {"type": "string", "minLength": 1},
+        "prompt_sha256": {"type": "string", "minLength": 16},
+        "imagegen_prompt_sha256": {"type": "string", "minLength": 16},
+        "definition_sha256": {"type": "string", "minLength": 16},
+        "definition_content_sha256": {"type": "string", "minLength": 16},
+        "definition_record_sha256_current": {"type": "string", "minLength": 16},
+        "contract_sha256": {"type": ["string", "null"]},
+        "bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "minLength": 64}
+      }
+    }
+  }
+}
