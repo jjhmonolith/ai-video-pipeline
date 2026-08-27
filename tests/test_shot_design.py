@@ -29,8 +29,10 @@ ATTEMPTS = [
     ROOT / "runs/luxury-penthouse-tour/attempts/v1-pilot",
 ]
 CAR_ATTEMPT = ROOT / "runs/fictional-ferrari-track-review/attempts/v1-pilot"
+LOCAL_FIXTURES = all(path.is_dir() for path in [*ATTEMPTS, CAR_ATTEMPT])
 
 
+@unittest.skipUnless(LOCAL_FIXTURES, "local production fixtures are excluded from public checkout")
 class ShotDesignCompilerTests(unittest.TestCase):
     def _compile(self, attempt: Path) -> tuple[Contract, dict, dict]:
         contract = Contract.load(attempt)
@@ -556,6 +558,7 @@ class ShotDesignCompilerTests(unittest.TestCase):
         } for item in report["problems"]))
 
 
+@unittest.skipUnless(LOCAL_FIXTURES, "local production fixtures are excluded from public checkout")
 class Stage4ExperimentArtifactTests(unittest.TestCase):
     def test_four_methods_keep_fixed_input_hash_and_are_not_production_outputs(self):
         for attempt in ATTEMPTS:

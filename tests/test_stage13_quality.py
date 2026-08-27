@@ -25,8 +25,10 @@ ATTEMPTS = [
     ROOT / "runs/sky-village-plumber/attempts/v1-pilot",
     ROOT / "runs/luxury-penthouse-tour/attempts/v1-pilot",
 ]
+LOCAL_FIXTURES = all(path.is_dir() for path in ATTEMPTS)
 
 
+@unittest.skipUnless(LOCAL_FIXTURES, "local production fixtures are excluded from public checkout")
 class RegressionAttemptTests(unittest.TestCase):
     def test_both_attempts_are_equal_current_loader_fixtures(self):
         contracts = [Contract.load(path) for path in ATTEMPTS]
@@ -215,6 +217,7 @@ class ResearchPlanTests(unittest.TestCase):
 
 
 class SheetReferenceContractTests(unittest.TestCase):
+    @unittest.skipUnless(LOCAL_FIXTURES, "local production fixtures are excluded from public checkout")
     def test_pixel_existence_never_becomes_semantic_pass(self):
         source = ATTEMPTS[1]
         report = audit_references(source, Contract.load(source))

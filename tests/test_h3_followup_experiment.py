@@ -5,8 +5,13 @@ from ai_video_pipeline.h3_followup_experiment import _l1_manifest, _m1_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+LOCAL_FIXTURES = all((ROOT / relative).is_dir() for relative in (
+    "runs/luxury-penthouse-tour/attempts/v1-pilot",
+    "runs/sky-village-plumber/attempts/v1-pilot",
+))
 
 
+@unittest.skipUnless(LOCAL_FIXTURES, "local production fixtures are excluded from public checkout")
 class H3FollowupExperimentTests(unittest.TestCase):
     def test_factorial_counts_and_canary_split_match_the_design(self):
         manifests = [_l1_manifest(ROOT), _m1_manifest(ROOT)]
